@@ -5,7 +5,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <ul v-if="userIsLogged" class="navbar-nav">
+            <ul v-if="isUserLoggedIn" class="navbar-nav">
                 <li class="nav-item">
                     <router-link class="nav-link" to="/catalog">Catalog</router-link>
                 </li>
@@ -13,7 +13,7 @@
                     <router-link class="nav-link" to="/orders">Orders</router-link>
                 </li>
                 <li class="nav-item">
-                    <router-link class="nav-link" to="/cart">Cart <span class="badge badge-secondary badge-pill">{{ totalValue }}</span></router-link>
+                    <router-link class="nav-link" to="/cart">Cart <span class="badge badge-secondary badge-pill">{{ 0 }}</span></router-link>
                 </li>
             </ul>
             <ul v-else class="navbar-nav">
@@ -30,7 +30,12 @@
 
 <script>
     export default {
-        name: "navigation"
+        name: "navigation",
+        computed: {
+            isUserLoggedIn () {
+                return !!this.$store.getters.isUserLoggedIn;
+            }
+        }
     }
 </script>
 

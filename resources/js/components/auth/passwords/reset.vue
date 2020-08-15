@@ -1,31 +1,14 @@
 <template>
-    <div class="mt-4 container">
+    <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="shadow card">
-                    <div class="card-header">Register</div>
+                <div class="card">
+                    <div class="card-header">Reset Password</div>
 
                     <div class="card-body">
-                        <form
-                            @submit.prevent="onSubmit"
-                            method="POST" action="">
+                        <form method="POST" action="">
 
-                            <div class="form-group row">
-                                <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
-                                <div class="col-md-6">
-                                    <input v-model.trim="name"
-                                           @input="$v.name.$touch()"
-                                           :class="validName"
-                                           class="form-control"
-                                           id="name" type="text" name="name" value="" required autocomplete="name" autofocus>
-                                    <span class="invalid-feedback" v-if="$v.name.$dirty && !$v.name.minLength" role="alert">
-                                        <strong>Username must be more than 4 characters.</strong>
-                                    </span>
-                                    <span class="invalid-feedback" v-else-if="$v.name.$dirty && !$v.name.required" role="alert">
-                                        <strong>Username cannot be empty.</strong>
-                                    </span>
-                                </div>
-                            </div>
+                            <input type="hidden" name="token" value="">
 
                             <div class="form-group row">
                                 <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
@@ -44,7 +27,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                                <label for="password" class="col-md-4 col-form-label text-md-right">New Password</label>
                                 <div class="col-md-6">
                                     <input v-model.trim="password"
                                            @input="$v.password.$touch()"
@@ -61,7 +44,7 @@
                             </div>
 
                             <div class="form-group row" v-if="password">
-                                <label for="password-confirm" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+                                <label for="password-confirm" class="col-md-4 col-form-label text-md-right">Confirm New Password</label>
                                 <div class="col-md-6">
                                     <input
                                         v-model="passwordConfirm"
@@ -81,7 +64,7 @@
                                     <button
                                         :disabled="$v.$invalid"
                                         type="submit" class="btn btn-primary">
-                                        Register
+                                        Reset Password
                                     </button>
                                 </div>
                             </div>
@@ -96,53 +79,46 @@
 <script>
     import {email, minLength, required, sameAs} from 'vuelidate/lib/validators'
     export default {
-        name: "register",
+        name: "reset",
         data () {
             return {
-                name: '',
                 email: '',
                 password: '',
                 passwordConfirm: ''
             }
         },
         computed: {
-            validName () {
-                if ((this.$v.name.$dirty && !this.$v.name.required) || (this.$v.name.$dirty && !this.$v.name.minLength)) {
-                    return 'is-invalid';
-                } else if (!(this.$v.name.$dirty && !this.$v.name.required) || !(this.$v.name.$dirty && !this.$v.name.email)) {
-                    return 'is-valid';
-                }
-            },
-            validEmail () {
+            validEmail() {
                 if ((this.$v.email.$dirty && !this.$v.email.required) || (this.$v.email.$dirty && !this.$v.email.email)) {
                     return 'is-invalid';
                 } else if (!(this.$v.email.$dirty && !this.$v.email.required) || !(this.$v.email.$dirty && !this.$v.email.email)) {
                     return 'is-valid';
                 }
             },
-            validPassword () {
+            validPassword() {
                 if ((this.$v.password.$dirty && !this.$v.password.required) || (this.$v.password.$dirty && !this.$v.password.minLength)) {
                     return 'is-invalid';
                 } else if (!(this.$v.password.$dirty && !this.$v.password.required) || !(this.$v.password.$dirty && !this.$v.password.email)) {
                     return 'is-valid';
                 }
             },
-            validPasswordConfirm () {
+            validPasswordConfirm() {
                 if (this.$v.passwordConfirm.$dirty && this.$v.passwordConfirm.sameAs) {
                     return 'is-valid';
                 } else {
                     return 'is-invalid';
                 }
+            },
+        },
+        methods: {
+            onSubmit () {
+
             }
         },
         validations: {
             email: {
                 email,
                 required
-            },
-            name: {
-                required,
-                minLength: minLength(5)
             },
             password: {
                 required,
@@ -152,18 +128,6 @@
                 sameAs: sameAs('password')
             }
         },
-        methods: {
-            onSubmit () {
-                const user = {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password
-                };
-                if (this.$v.$invalid) {
-                    this.$store.dispatch('registerUser', user)
-                }
-            }
-        }
     }
 </script>
 

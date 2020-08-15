@@ -3,9 +3,10 @@ import App from "./components/App";
 import VueRouter from "vue-router";
 import router from "./routes";
 import store from "./store"
-
+import Vuelidate from "vuelidate/src";
 
 Vue.use(VueRouter);
+Vue.use(Vuelidate);
 
 /**
  * The following block of code may be used to automatically register your
@@ -25,6 +26,7 @@ Vue.component('mainpage', require('./components/mainpage').default);
 Vue.component('navigation', require('./components/navigation').default);
 Vue.component('catalog', require('./components/products/catalog').default);
 Vue.component('product', require('./components/products/product').default);
+Vue.component('reset', require('./components/auth/passwords/reset').default);
 Vue.component('login', require('./components/auth/login').default);
 Vue.component('register', require('./components/auth/register').default);
 Vue.component('cart', require('./components/cart/cart').default);
@@ -37,6 +39,10 @@ Vue.component('usercart', require('./components/cart/usercart').default);
 
 const app = new Vue({
     el: '#app',
+    render: h => h(App),
     router: router,
-    store: store
+    store: store,
+    created () {
+
+    }
 });

@@ -1,5 +1,6 @@
 import VueRouter from "vue-router";
 import login from './components/auth/login';
+import reset from './components/auth/passwords/reset';
 import register from './components/auth/register';
 import cart from './components/cart/cart';
 import catalog from './components/products/catalog';
@@ -31,6 +32,10 @@ export default new VueRouter({
         {
             path: '/orders',
             component: orders
+        },
+        {
+            path: '/reset',
+            component: reset
         },
     ],
     mode: 'history'
