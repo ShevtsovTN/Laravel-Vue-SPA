@@ -6,6 +6,7 @@
                     <div class="card-header">Register</div>
 
                     <div class="card-body">
+
                         <form
                             @submit.prevent="onSubmit"
                             method="POST" action="">
@@ -94,6 +95,9 @@
 </template>
 
 <script>
+
+
+
     import {email, minLength, required, sameAs} from 'vuelidate/lib/validators'
     export default {
         name: "register",
@@ -159,8 +163,9 @@
                     email: this.email,
                     password: this.password
                 };
-                if (this.$v.$invalid) {
-                    this.$store.dispatch('registerUser', user)
+                if (!this.$v.$invalid) {
+                    this.$store.dispatch('registerUser', user);
+                    this.$router.push('/').catch(()=>{});
                 }
             }
         }

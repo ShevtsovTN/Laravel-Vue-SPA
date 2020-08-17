@@ -23,6 +23,7 @@ Vue.component('App', require('./components/App').default);
 Vue.component('preloader', require('./components/preloader').default);
 Vue.component('orders', require('./components/orders').default);
 Vue.component('mainpage', require('./components/mainpage').default);
+Vue.component('alert', require('./components/alert').default);
 Vue.component('navigation', require('./components/navigation').default);
 Vue.component('catalog', require('./components/products/catalog').default);
 Vue.component('product', require('./components/products/product').default);
@@ -43,6 +44,9 @@ const app = new Vue({
     router: router,
     store: store,
     created () {
-
+        axios.get('/auth').then((response) => {
+            console.log(response.data);
+            this.$store.dispatch('authUser', response.data);
+        })
     }
 });

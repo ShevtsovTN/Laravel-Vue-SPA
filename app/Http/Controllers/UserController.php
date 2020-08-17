@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function authenticate(Request $request)
+    public function auth()
     {
-
+        return Auth::user();
     }
 
     public function logout()

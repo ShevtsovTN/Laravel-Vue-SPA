@@ -42,17 +42,6 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-6 offset-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" id="remember" checked>
-                                        <label class="form-check-label" for="remember">
-                                            Remember Me
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
                                     <button
@@ -101,8 +90,13 @@
         },
         methods: {
             onSubmit () {
-                if (this.$v.$invalid) {
-
+                const user = {
+                    email: this.email,
+                    password: this.password
+                };
+                if (!this.$v.$invalid) {
+                    this.$store.dispatch('loginUser', user);
+                    //this.$router.push('/').catch(()=>{});
                 }
             }
         },

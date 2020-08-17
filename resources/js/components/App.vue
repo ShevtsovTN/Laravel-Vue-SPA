@@ -1,6 +1,7 @@
 <template>
     <div class="content">
         <navigation></navigation>
+        <alert v-if="message"></alert>
         <transition name="fade" mode="out-in">
             <router-view></router-view>
         </transition>
@@ -11,8 +12,8 @@
     export default {
         name: "App",
         computed: {
-            isUserLoggedIn () {
-                return this.$store.getters.isUserLoggedIn;
+            message () {
+                return this.$store.getters.message;
             }
         }
     }

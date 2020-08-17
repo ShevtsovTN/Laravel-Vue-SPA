@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::post('/register', 'UserController@register');
-Route::post('/login', 'UserController@login');
+Auth::routes();
+Route::get('/auth', 'UserController@auth');
 Route::get('/{any}', function () {
     return view('welcome');
 });

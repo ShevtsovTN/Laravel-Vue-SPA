@@ -1,14 +1,14 @@
 window.Vue = require('vue');
 import Vuex from "vuex"
 import user from "./user";
-import product from "./product";
-import validators from "./validators"
+import products from "./products";
+import alert from "./alert";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
-        product, user//, validators
+        products, user, alert
     },
     state: {
         loading: true,
@@ -32,10 +32,6 @@ export default new Vuex.Store({
                 title: 'Russia'
             }
         },
-        dataProducts: [],
-        productsInCart: [],
-        totalAmountCart: 0,
-        totalValueCart: 0,
         userBillingData: {
             address: '',
             address2: '',
@@ -45,38 +41,14 @@ export default new Vuex.Store({
         }
     },
     getters: {
-        // Применение методов к state, вызывается в компоненте, обязателен return.
+        loading (state) {
+            return state.loading;
+        }
     },
     mutations: {
-        getProductToCatalog (state, payload) {
-            for (let key in payload) {
-                payload[key].amount = payload[key].amount / 100;
-            }
-            state.dataProducts = payload;
-            state.loading = false;
-        },
-        getProductOnUserCart (state, payload) {
-            state.productsInCart.push(payload);
-            state.totalAmountCart += payload.amount;
-            state.totalValueCart++;
-        },
-        clearProductInCart (state) {
-            state.productsInCart = [];
-            state.totalAmountCart = 0;
-            state.totalValueCart = 0;
-        }
+
     },
     actions: {
-        getProduct ({commit}) {
-            axios.get('/api/getProducts').then((response) => {
-                commit('getProductToCatalog', response.data.data);
-            });
-        },
-        addToCart ({commit}, payload) {
-            commit('getProductOnUserCart', payload);
-        },
-        clearCart ({commit}) {
-            commit('clearProductInCart');
-        }
+
     }
 })
