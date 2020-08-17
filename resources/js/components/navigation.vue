@@ -15,7 +15,7 @@
                 <li v-if="isUserLoggedIn"
                     @click="onLogout"
                     class="nav-item">
-                    <router-link class="nav-link" to="">Logout</router-link>
+                    <router-link class="nav-link" to="/">Logout</router-link>
                 </li>
             </ul>
         </div>
@@ -35,7 +35,6 @@
                         {title: 'Catalog', url: '/catalog'},
                         {title: 'Orders', url: '/orders'},
                         {title: 'Cart', url: '/cart'},
-                        //{title: 'Logout', url: '/logout'},
                     ]
                 }
                 return [
@@ -47,7 +46,6 @@
         methods: {
             onLogout () {
                 this.$store.dispatch('Logout');
-                this.$router.push('/').catch(()=>{});
             }
         }
     }

@@ -24,31 +24,31 @@ export default {
         }
     },
     actions: {
-        registerUser ({commit}, payload) {
-            axios.post('/register', payload)
+        async registerUser ({commit}, payload) {
+            let response = await axios.post('/register', payload)
                 .then((response) => {
-
+                    commit('addUser', response.data);
+                    return response;
                 })
                 .catch((e) => {
-
                 });
-            //commit('addUser', new User(payload));
+            //commit('addUser', response.data);
         },
         async loginUser ({commit}, payload) {
             let response = await axios.post('/login', payload).then((response) => {
+                commit('addUser', response.data);
                 return response;
             });
-            console.log(response);
-            //commit('addUser', new User(payload));
+            //commit('addUser', response.data);
         },
         authUser ({commit}, payload) {
             if (payload.name && payload.email) {
-                commit('getUser', payload);
+                commit('addUser', payload);
             }
         },
-        Logout ({commit}) {
-            axios.post('/logout').then((response) => {
-
+        async Logout ({commit}) {
+            let response = await axios.post('/logout').then((response) => {
+                return response;
             });
             commit('clearUser');
         }

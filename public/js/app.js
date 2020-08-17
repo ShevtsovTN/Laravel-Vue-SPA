@@ -2095,7 +2095,8 @@ __webpack_require__.r(__webpack_exports__);
       };
 
       if (!this.$v.$invalid) {
-        this.$store.dispatch('loginUser', user); //this.$router.push('/').catch(()=>{});
+        this.$store.dispatch('loginUser', user);
+        this.$router.push('/')["catch"](function () {});
       }
     }
   },
@@ -2815,8 +2816,7 @@ __webpack_require__.r(__webpack_exports__);
         }, {
           title: 'Cart',
           url: '/cart'
-        } //{title: 'Logout', url: '/logout'},
-        ];
+        }];
       }
 
       return [{
@@ -2831,7 +2831,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     onLogout: function onLogout() {
       this.$store.dispatch('Logout');
-      this.$router.push('/')["catch"](function () {});
     }
   }
 });
@@ -42037,7 +42036,7 @@ var render = function() {
                     [
                       _c(
                         "router-link",
-                        { staticClass: "nav-link", attrs: { to: "" } },
+                        { staticClass: "nav-link", attrs: { to: "/" } },
                         [_vm._v("Logout")]
                       )
                     ],
@@ -62023,27 +62022,23 @@ var User = function User(user) {
   },
   actions: {
     registerUser: function registerUser(_ref, payload) {
-      var commit = _ref.commit;
-      axios.post('/register', payload).then(function (response) {})["catch"](function (e) {}); //commit('addUser', new User(payload));
-    },
-    loginUser: function loginUser(_ref2, payload) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var commit, response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                commit = _ref2.commit;
+                commit = _ref.commit;
                 _context.next = 3;
-                return axios.post('/login', payload).then(function (response) {
+                return axios.post('/register', payload).then(function (response) {
+                  commit('addUser', response.data);
                   return response;
-                });
+                })["catch"](function (e) {});
 
               case 3:
                 response = _context.sent;
-                console.log(response); //commit('addUser', new User(payload));
 
-              case 5:
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -62051,17 +62046,62 @@ var User = function User(user) {
         }, _callee);
       }))();
     },
+    loginUser: function loginUser(_ref2, payload) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var commit, response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                commit = _ref2.commit;
+                _context2.next = 3;
+                return axios.post('/login', payload).then(function (response) {
+                  commit('addUser', response.data);
+                  return response;
+                });
+
+              case 3:
+                response = _context2.sent;
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
     authUser: function authUser(_ref3, payload) {
       var commit = _ref3.commit;
 
       if (payload.name && payload.email) {
-        commit('getUser', payload);
+        commit('addUser', payload);
       }
     },
     Logout: function Logout(_ref4) {
-      var commit = _ref4.commit;
-      axios.post('/logout').then(function (response) {});
-      commit('clearUser');
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        var commit, response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                commit = _ref4.commit;
+                _context3.next = 3;
+                return axios.post('/logout').then(function (response) {
+                  return response;
+                });
+
+              case 3:
+                response = _context3.sent;
+                commit('clearUser');
+
+              case 5:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
     }
   },
   getters: {
@@ -62085,19 +62125,27 @@ var User = function User(user) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.vue");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
-/* harmony import */ var vuelidate_src__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuelidate/src */ "./node_modules/vuelidate/src/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.vue");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
+/* harmony import */ var vuelidate_src__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuelidate/src */ "./node_modules/vuelidate/src/index.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
 
 
 
 
-Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-Vue.use(vuelidate_src__WEBPACK_IMPORTED_MODULE_4__["default"]);
+Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
+Vue.use(vuelidate_src__WEBPACK_IMPORTED_MODULE_5__["default"]);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -62130,18 +62178,30 @@ Vue.component('usercart', __webpack_require__(/*! ./components/cart/usercart */ 
 var app = new Vue({
   el: '#app',
   render: function render(h) {
-    return h(_components_App__WEBPACK_IMPORTED_MODULE_0__["default"]);
+    return h(_components_App__WEBPACK_IMPORTED_MODULE_1__["default"]);
   },
-  router: _routes__WEBPACK_IMPORTED_MODULE_2__["default"],
-  store: _store__WEBPACK_IMPORTED_MODULE_3__["default"],
+  router: _routes__WEBPACK_IMPORTED_MODULE_3__["default"],
+  store: _store__WEBPACK_IMPORTED_MODULE_4__["default"],
   created: function created() {
     var _this = this;
 
-    axios.get('/auth').then(function (response) {
-      console.log(response.data);
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return axios.get('/auth').then(function (response) {
+                _this.$store.dispatch('authUser', response.data);
+              });
 
-      _this.$store.dispatch('authUser', response.data);
-    });
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
   }
 });
 

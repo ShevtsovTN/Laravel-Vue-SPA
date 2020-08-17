@@ -43,9 +43,8 @@ const app = new Vue({
     render: h => h(App),
     router: router,
     store: store,
-    created () {
-        axios.get('/auth').then((response) => {
-            console.log(response.data);
+    async created () {
+        await axios.get('/auth').then((response) => {
             this.$store.dispatch('authUser', response.data);
         })
     }

@@ -96,7 +96,7 @@
                 };
                 if (!this.$v.$invalid) {
                     this.$store.dispatch('loginUser', user);
-                    //this.$router.push('/').catch(()=>{});
+                    this.$router.push('/').catch(()=>{});
                 }
             }
         },
