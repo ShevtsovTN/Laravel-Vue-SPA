@@ -1,10 +1,10 @@
 <template>
     <div class="content">
         <navigation></navigation>
-        <alert v-if="message"></alert>
-        <transition name="fade" mode="out-in">
+        <transition v-if="!loadingData" name="fade" mode="out-in">
             <router-view></router-view>
         </transition>
+        <preloader v-else="loadingData"></preloader>
     </div>
 </template>
 
@@ -12,8 +12,8 @@
     export default {
         name: "App",
         computed: {
-            message () {
-                return this.$store.getters.message;
+            loadingData () {
+                return this.$store.getters.loading
             }
         }
     }

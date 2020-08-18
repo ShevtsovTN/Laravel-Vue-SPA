@@ -11,7 +11,8 @@ export default new Vuex.Store({
         products, user, alert
     },
     state: {
-        loading: true,
+        loading: false,
+        error: null,
         countries: {
             UnatedStates: {
                 id: 1,
@@ -42,13 +43,32 @@ export default new Vuex.Store({
     },
     getters: {
         loading (state) {
-            return state.loading;
+            return state.loading
+        },
+        error (state) {
+            return state.error
         }
     },
     mutations: {
-
+        setLoading (state, payload) {
+            state.loading = payload
+        },
+        setError (state, payload) {
+            state.error = payload
+        },
+        clearError (state) {
+            state.error = null
+        }
     },
     actions: {
-
+        setLoading ({commit}, payload) {
+            commit('setLoading', payload)
+        },
+        setError ({commit}, payload) {
+            commit('setError', payload)
+        },
+        clearError ({commit}) {
+            commit('clearError')
+        }
     }
 })

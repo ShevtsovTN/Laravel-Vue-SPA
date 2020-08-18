@@ -1,8 +1,7 @@
 <template>
     <div class="container-fluid mt-4 mb-4">
         <div class="row">
-            <preloader v-if="loading"></preloader>
-            <table v-else class="table container">
+            <table class="table container">
                 <thead>
                 <tr>
                     <th>№</th>
@@ -28,25 +27,19 @@
 <script>
     export default {
         name: "catalog",
-        data () {
-            return {
-                loading: true
-            }
-        },
         computed: {
             dataProducts () {
-                return this.$store.state.dataProducts;
+                return this.$store.getters.dataProducts;
             }
         },
-        mounted() {
+        /*mounted() {
             this.update();
         },
         methods: {
             update: function () {
                 this.$store.dispatch('getProduct');
-                this.loading = false;
             }
-        }
+        }*/
     }
 </script>
 

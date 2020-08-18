@@ -1,5 +1,5 @@
 <template>
-    <div class="loader">
+    <div class="container loader">
         <div class="inner one"></div>
         <div class="inner two"></div>
         <div class="inner three"></div>
@@ -12,7 +12,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style>
     .loader {
         position: absolute;
         top: calc(50% - 32px);

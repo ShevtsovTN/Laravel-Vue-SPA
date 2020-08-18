@@ -11,7 +11,6 @@ export default {
                 payload[key].amount = payload[key].amount / 100;
             }
             state.dataProducts = payload;
-            state.loading = false;
         },
         getProductOnUserCart (state, payload) {
             state.productsInCart.push(payload);
@@ -25,8 +24,8 @@ export default {
         }
     },
     actions: {
-        getProduct ({commit}) {
-            axios.get('/api/getProducts').then((response) => {
+        async getProduct ({commit}) {
+            await axios.get('/api/getProducts').then((response) => {
                 commit('getProductToCatalog', response.data.data);
             });
         },
@@ -38,6 +37,8 @@ export default {
         }
     },
     getters: {
-
+        dataProducts (state) {
+            return state.dataProducts;
+        }
     }
 }

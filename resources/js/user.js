@@ -1,11 +1,3 @@
-class User {
-    constructor (user) {
-        this.name = user.name;
-        this.email = user.email;
-        this.password = user.password;
-    }
-}
-
 export default {
     state: {
         user: {
@@ -14,48 +6,58 @@ export default {
         }
     },
     mutations: {
-        addUser (state, payload) {
+        setUser(state, payload) {
             state.user.name = payload.name;
             state.user.email = payload.email;
         },
-        clearUser (state) {
+        clearUser(state) {
             state.user.name = null;
             state.user.email = null;
+        },
+        checkUser (state, payload) {
+            state.checkAuthUser = payload;
         }
     },
     actions: {
         async registerUser ({commit}, payload) {
-            let response = await axios.post('/register', payload)
+            commit('clearError');
+            commit('setLoading', true);
+            await axios.post('/register', payload)
                 .then((response) => {
-                    commit('addUser', response.data);
-                    return response;
+                    commit('setUser', response.data);
+                    commit('setLoading', false);
                 })
                 .catch((e) => {
+                    commit('setLoading', false);
+                    commit('setError', e.message)
                 });
-            //commit('addUser', response.data);
         },
         async loginUser ({commit}, payload) {
-            let response = await axios.post('/login', payload).then((response) => {
-                commit('addUser', response.data);
-                return response;
-            });
-            //commit('addUser', response.data);
+            commit('clearError');
+            commit('setLoading', true);
+            await axios.post('/login', payload)
+                .then((response) => {
+                commit('setUser', response.data);
+                commit('setLoading', false);
+            })
+                .catch((e) => {
+                    commit('setLoading', false);
+                    commit('setError', e.message)
+                });
         },
         authUser ({commit}, payload) {
             if (payload.name && payload.email) {
-                commit('addUser', payload);
+                commit('setUser', payload);
             }
         },
         async Logout ({commit}) {
-            let response = await axios.post('/logout').then((response) => {
-                return response;
-            });
+            await axios.post('/logout');
             commit('clearUser');
         }
     },
     getters: {
         user (state) {
-            return state.user;
+            return state.user.name;
         },
         isUserLoggedIn (state) {
             return state.user.name !== null

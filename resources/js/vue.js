@@ -43,9 +43,12 @@ const app = new Vue({
     render: h => h(App),
     router: router,
     store: store,
-    async created () {
-        await axios.get('/auth').then((response) => {
+    created () {
+        this.$store.commit('setLoading', true);
+        axios.get('/auth').then((response) => {
             this.$store.dispatch('authUser', response.data);
-        })
+        });
+        this.$store.dispatch('getProduct');
+        this.$store.commit('setLoading', false);
     }
 });
