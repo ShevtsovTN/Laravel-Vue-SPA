@@ -127,7 +127,7 @@
             validPassword () {
                 if ((this.$v.password.$dirty && !this.$v.password.required) || (this.$v.password.$dirty && !this.$v.password.minLength)) {
                     return 'is-invalid';
-                } else if (!(this.$v.password.$dirty && !this.$v.password.required) || !(this.$v.password.$dirty && !this.$v.password.email)) {
+                } else if (!(this.$v.password.$dirty && !this.$v.password.required) || !(this.$v.password.$dirty && !this.$v.password.minLength)) {
                     return 'is-valid';
                 }
             },

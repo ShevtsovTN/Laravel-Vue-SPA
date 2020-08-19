@@ -3,12 +3,13 @@ import Vuex from "vuex"
 import user from "./user";
 import products from "./products";
 import alert from "./alert";
+import payments from "./payments";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
-        products, user, alert
+        products, user, alert, payments
     },
     state: {
         loading: false,

@@ -28,15 +28,17 @@
                 <strong>{{ currencyLabel }}{{ totalAmount }}</strong>
             </li>
         </ul>
-        <form class="card p-2">
+        <form class="card p-2"
+              @submit.prevent="onSubmit"
+        >
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Promo code">
                 <div class="input-group-append">
-                    <button :click="getDiscount"  class="btn btn-secondary">Redeem</button>
+                    <button type="submit"  class="btn btn-secondary">Redeem</button>
                 </div>
             </div>
             <div class="container-fluid">
-                <button :click="clearCart" type="submit" class="mt-2 btn btn-secondary btn-lg btn-block">Clear Cart</button>
+                <button @click="clearCart" class="mt-2 btn btn-secondary btn-lg btn-block">Clear Cart</button>
             </div>
         </form>
 
@@ -57,13 +59,13 @@
         },
         computed: {
             userCart() {
-                return this.$store.state.productsInCart;
+                return this.$store.getters.productsInCart;
             },
             totalAmount() {
-                return this.$store.state.totalAmountCart;
+                return this.$store.getters.totalAmountInCart;
             },
             totalValue() {
-                return this.$store.state.totalValueCart;
+                return this.$store.getters.totalValueInCart;
             }
         },
         methods: {

@@ -31,15 +31,7 @@
             dataProducts () {
                 return this.$store.getters.dataProducts;
             }
-        },
-        /*mounted() {
-            this.update();
-        },
-        methods: {
-            update: function () {
-                this.$store.dispatch('getProduct');
-            }
-        }*/
+        }
     }
 </script>
 

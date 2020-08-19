@@ -12,6 +12,11 @@
                     class="nav-item">
                     <router-link class="nav-link" :to="link.url">{{ link.title }}</router-link>
                 </li>
+                <li class="nav-item">
+                    <router-link v-if="isUserLoggedIn" class="nav-link" :to="cart.url">
+                        {{ cart.title }} <span class="cart-viewer rounded-circle bg-secondary text-light">{{ totalValueInCart }}</span>
+                    </router-link>
+                </li>
                 <router-link
                         v-if="isUserLoggedIn"
                         class="nav-item ml-sm-auto"
@@ -38,8 +43,7 @@
                 if (this.isUserLoggedIn) {
                     return [
                         {title: 'Catalog', url: '/catalog'},
-                        {title: 'Orders', url: '/orders'},
-                        {title: 'Cart', url: '/cart'},
+                        {title: 'Orders', url: '/orders'}
                     ]
                 }
                 return [
@@ -47,8 +51,17 @@
                     {title: 'Register', url: '/register'}
                 ]
             },
+            cart () {
+                return {
+                    title: 'Cart',
+                    url: '/cart'
+                }
+            },
             username () {
                 return this.$store.getters.user;
+            },
+            totalValueInCart () {
+                return this.$store.getters.totalValueInCart;
             }
         },
         methods: {
@@ -60,5 +73,8 @@
 </script>
 
 <style scoped>
-
+.cart-viewer {
+    padding: 0 5px 0 5px;
+    margin-left: 3px;
+}
 </style>

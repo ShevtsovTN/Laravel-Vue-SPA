@@ -39,6 +39,15 @@ export default {
     getters: {
         dataProducts (state) {
             return state.dataProducts;
+        },
+        productsInCart (state) {
+            return state.productsInCart;
+        },
+        totalAmountInCart (state) {
+            return state.totalAmountCart;
+        },
+        totalValueInCart (state) {
+            return state.totalValueCart;
         }
     }
 }
