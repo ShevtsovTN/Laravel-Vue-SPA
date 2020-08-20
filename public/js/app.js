@@ -3019,17 +3019,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "product",
   props: ['product'],
   data: function data() {
     return {
-      is_added: false
+      productIsEmpty: false
     };
   },
   methods: {
     addToCart: function addToCart(product) {
+      this.product.value--;
       this.$store.dispatch('addToCart', product);
+
+      if (this.product.value < 1) {
+        this.productIsEmpty = true;
+      }
     }
   }
 });
@@ -42231,6 +42237,7 @@ var render = function() {
         "button",
         {
           staticClass: "btn btn-success",
+          attrs: { disabled: _vm.productIsEmpty },
           on: {
             click: function($event) {
               return _vm.addToCart(_vm.product)

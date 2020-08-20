@@ -7,6 +7,7 @@
         <td>{{ product.amount }}</td>
         <td>
             <button class="btn btn-success"
+                    :disabled="productIsEmpty"
                     @click="addToCart(product)"
             >Ad to Cart</button>
         </td>
@@ -21,12 +22,16 @@
         ],
         data: function() {
             return {
-                is_added: false,
+                productIsEmpty: false,
             }
         },
         methods: {
             addToCart: function (product) {
+                this.product.value--;
                 this.$store.dispatch('addToCart', product);
+                if (this.product.value < 1) {
+                    this.productIsEmpty = true;
+                }
             }
         }
     }
