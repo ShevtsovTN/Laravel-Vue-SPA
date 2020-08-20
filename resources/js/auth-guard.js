@@ -1,11 +1,6 @@
 import store from "./store";
 
 export default function (to, from, next) {
-    setTimeout(() => {
-        if (store.getters.isUserLoggedIn) {
-            next()
-        } else {
-            next('/login?loginError=true')
-        }
-    }, 300)
+    if (to.name !== 'login' && !store.getters.isUserLoggedIn) next({ name: 'login' });
+    else next()
 }

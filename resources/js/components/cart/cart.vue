@@ -129,7 +129,7 @@
                         </div>
                     </div>
                     <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" :disabled="$v.$invalid" type="submit">Continue to checkout</button>
+                    <button class="btn btn-primary btn-lg btn-block" :disabled="canBuy" type="submit">Continue to checkout</button>
                 </div>
             </div>
         </div>
@@ -155,6 +155,14 @@
             }
         },
         computed: {
+            canBuy() {
+                if (this.$store.getters.totalValueInCart !== 0) {
+                    if (!this.$v.$invalid) {
+                        return false;
+                    }
+                }
+                return true;
+            },
             validFirstname () {
                 if (this.$v.firstname.$dirty && !this.$v.firstname.required) {
                     return 'is-invalid';

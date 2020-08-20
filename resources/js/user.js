@@ -13,9 +13,6 @@ export default {
         clearUser(state) {
             state.user.name = null;
             state.user.email = null;
-        },
-        checkUser (state, payload) {
-            state.checkAuthUser = payload;
         }
     },
     actions: {

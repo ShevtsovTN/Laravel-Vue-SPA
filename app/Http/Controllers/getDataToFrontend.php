@@ -19,12 +19,11 @@ class getDataToFrontend extends Controller
     }
 
     /**
-     * @param Request $request
      * @return AnonymousResourceCollection
      */
-    public function getUserBillingData(Request $request)
+    public function getOrders()
     {
-        return BillingData::collection(Products::all());
+        return OrdersResource::collection(Orders::all()->where());
     }
 
 }

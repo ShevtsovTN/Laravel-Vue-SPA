@@ -2606,6 +2606,15 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
+    canBuy: function canBuy() {
+      if (this.$store.getters.totalValueInCart !== 0) {
+        if (!this.$v.$invalid) {
+          return false;
+        }
+      }
+
+      return true;
+    },
     validFirstname: function validFirstname() {
       if (this.$v.firstname.$dirty && !this.$v.firstname.required) {
         return 'is-invalid';
@@ -2920,8 +2929,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "orders"
+  name: "orders",
+  computed: {
+    orders: function orders() {
+      return this.$store.getters.getOrders;
+    }
+  }
 });
 
 /***/ }),
@@ -41706,7 +41746,7 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary btn-lg btn-block",
-                attrs: { disabled: _vm.$v.$invalid, type: "submit" }
+                attrs: { disabled: _vm.canBuy, type: "submit" }
               },
               [_vm._v("Continue to checkout")]
             )
@@ -42101,9 +42141,52 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", { staticClass: "container-fluid mt-4 mb-4" }, [
+    _c("div", { staticClass: "row" }, [
+      _c("table", { staticClass: "table container" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "tbody",
+          _vm._l(_vm.orders, function(order) {
+            return _c("tr", { key: order.id }, [
+              _c("td", [_vm._v(_vm._s(order.id))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(order.address))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(order.description))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(order.value))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(order.amount))])
+            ])
+          }),
+          0
+        )
+      ])
+    ])
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("№")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Address")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Description")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Value")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Amount")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -60787,13 +60870,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
 
 /* harmony default export */ __webpack_exports__["default"] = (function (to, from, next) {
-  setTimeout(function () {
-    if (_store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.isUserLoggedIn) {
-      next();
-    } else {
-      next('/login?loginError=true');
-    }
-  }, 300);
+  if (to.name !== 'login' && !_store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.isUserLoggedIn) next({
+    name: 'login'
+  });else next();
 });
 
 /***/ }),
@@ -61812,6 +61891,86 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/orders.js":
+/*!********************************!*\
+  !*** ./resources/js/orders.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  state: {
+    dataOrders: [{
+      id: 1,
+      address: 'address №1',
+      description: 'description №1',
+      value: 1,
+      amount: 1
+    }, {
+      id: 2,
+      address: 'address №2',
+      description: 'description №2',
+      value: 2,
+      amount: 2
+    }, {
+      id: 3,
+      address: 'address №3',
+      description: 'description №3',
+      value: 3,
+      amount: 3
+    }]
+  },
+  mutations: {
+    getOrdersToCatalog: function getOrdersToCatalog(state, payload) {
+      for (var key in payload) {
+        payload[key].amount = payload[key].amount / 100;
+      }
+
+      state.dataOrders = payload;
+    }
+  },
+  actions: {
+    getOrders: function getOrders(_ref) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var commit;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                commit = _ref.commit;
+                _context.next = 3;
+                return axios.get('/api/getOrders').then(function (response) {
+                  commit('getOrdersToCatalog', response.data.data);
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    }
+  },
+  getters: {
+    getOrders: function getOrders(state) {
+      return state.dataOrders;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/payments.js":
 /*!**********************************!*\
   !*** ./resources/js/payments.js ***!
@@ -62019,7 +62178,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _products__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./products */ "./resources/js/products.js");
 /* harmony import */ var _alert__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./alert */ "./resources/js/alert.js");
 /* harmony import */ var _payments__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./payments */ "./resources/js/payments.js");
+/* harmony import */ var _orders__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./orders */ "./resources/js/orders.js");
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+
 
 
 
@@ -62031,7 +62192,8 @@ Vue.use(vuex__WEBPACK_IMPORTED_MODULE_0__["default"]);
     products: _products__WEBPACK_IMPORTED_MODULE_2__["default"],
     user: _user__WEBPACK_IMPORTED_MODULE_1__["default"],
     alert: _alert__WEBPACK_IMPORTED_MODULE_3__["default"],
-    payments: _payments__WEBPACK_IMPORTED_MODULE_4__["default"]
+    payments: _payments__WEBPACK_IMPORTED_MODULE_4__["default"],
+    orders: _orders__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   state: {
     loading: false,
@@ -62133,9 +62295,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     clearUser: function clearUser(state) {
       state.user.name = null;
       state.user.email = null;
-    },
-    checkUser: function checkUser(state, payload) {
-      state.checkAuthUser = payload;
     }
   },
   actions: {

@@ -4,12 +4,13 @@ import user from "./user";
 import products from "./products";
 import alert from "./alert";
 import payments from "./payments";
+import orders from "./orders";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
-        products, user, alert, payments
+        products, user, alert, payments, orders
     },
     state: {
         loading: false,
