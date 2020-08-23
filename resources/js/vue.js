@@ -32,6 +32,7 @@ Vue.component('login', require('./components/auth/login').default);
 Vue.component('register', require('./components/auth/register').default);
 Vue.component('cart', require('./components/cart/cart').default);
 Vue.component('usercart', require('./components/cart/usercart').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -45,9 +46,7 @@ const app = new Vue({
     store: store,
     created () {
         this.$store.commit('setLoading', true);
-        axios.get('/auth').then((response) => {
-            this.$store.dispatch('authUser', response.data);
-        });
+        this.$store.dispatch('authUser');
         this.$store.dispatch('getProduct');
         this.$store.commit('setLoading', false);
     }

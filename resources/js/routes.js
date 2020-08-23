@@ -8,7 +8,11 @@ import catalog from './components/products/catalog';
 import orders from './components/orders';
 import mainpage from './components/mainpage';
 
+
+
+
 export default new VueRouter({
+
     routes: [
         {
             path: '',

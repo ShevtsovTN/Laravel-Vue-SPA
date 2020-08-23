@@ -1,10 +1,8 @@
 <template>
     <div class="content">
         <navigation></navigation>
-        <transition v-if="!loadingData" name="fade" mode="out-in">
-            <router-view></router-view>
-        </transition>
-        <preloader v-else="loadingData"></preloader>
+        <router-view v-if="!loadingData"></router-view>
+        <preloader v-else></preloader>
     </div>
 </template>
 

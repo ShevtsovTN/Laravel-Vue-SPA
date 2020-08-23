@@ -42,10 +42,15 @@ export default {
                     commit('setError', e.message)
                 });
         },
-        authUser ({commit}, payload) {
-            if (payload.name && payload.email) {
-                commit('setUser', payload);
-            }
+        async authUser ({commit}) {
+            commit('clearError');
+            commit('setLoading', true);
+            await axios.get('/auth').then((response) => {
+                if (response.data.name && response.data.email) {
+                    commit('setUser', response.data);
+                }
+            });
+            commit('setLoading', false);
         },
         async Logout ({commit}) {
             await axios.post('/logout');

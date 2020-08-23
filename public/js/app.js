@@ -1928,8 +1928,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
   computed: {
@@ -40221,14 +40219,7 @@ var render = function() {
     [
       _c("navigation"),
       _vm._v(" "),
-      !_vm.loadingData
-        ? _c(
-            "transition",
-            { attrs: { name: "fade", mode: "out-in" } },
-            [_c("router-view")],
-            1
-          )
-        : _c("preloader")
+      !_vm.loadingData ? _c("router-view") : _c("preloader")
     ],
     1
   )
@@ -60870,9 +60861,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
 
 /* harmony default export */ __webpack_exports__["default"] = (function (to, from, next) {
-  if (to.name !== 'login' && !_store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.isUserLoggedIn) next({
-    name: 'login'
-  });else next();
+  if (_store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.isUserLoggedIn) {
+    next();
+  } else {
+    _store__WEBPACK_IMPORTED_MODULE_0__["default"].dispatch('authUser').then(function () {
+      if (to.name !== 'login' && !_store__WEBPACK_IMPORTED_MODULE_0__["default"].getters.isUserLoggedIn) {
+        next({
+          name: 'login'
+        });
+      } else {
+        next();
+      }
+    });
+  }
 });
 
 /***/ }),
@@ -62352,22 +62353,43 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    authUser: function authUser(_ref3, payload) {
-      var commit = _ref3.commit;
-
-      if (payload.name && payload.email) {
-        commit('setUser', payload);
-      }
-    },
-    Logout: function Logout(_ref4) {
+    authUser: function authUser(_ref3) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
         var commit;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                commit = _ref3.commit;
+                commit('clearError');
+                commit('setLoading', true);
+                _context3.next = 5;
+                return axios.get('/auth').then(function (response) {
+                  if (response.data.name && response.data.email) {
+                    commit('setUser', response.data);
+                  }
+                });
+
+              case 5:
+                commit('setLoading', false);
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
+    },
+    Logout: function Logout(_ref4) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        var commit;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
                 commit = _ref4.commit;
-                _context3.next = 3;
+                _context4.next = 3;
                 return axios.post('/logout');
 
               case 3:
@@ -62375,10 +62397,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3);
+        }, _callee4);
       }))();
     }
   },
@@ -62453,12 +62475,8 @@ var app = new Vue({
   router: _routes__WEBPACK_IMPORTED_MODULE_2__["default"],
   store: _store__WEBPACK_IMPORTED_MODULE_3__["default"],
   created: function created() {
-    var _this = this;
-
     this.$store.commit('setLoading', true);
-    axios.get('/auth').then(function (response) {
-      _this.$store.dispatch('authUser', response.data);
-    });
+    this.$store.dispatch('authUser');
     this.$store.dispatch('getProduct');
     this.$store.commit('setLoading', false);
   }
