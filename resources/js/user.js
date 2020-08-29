@@ -54,6 +54,7 @@ export default {
         },
         async Logout ({commit}) {
             await axios.post('/logout');
+            commit('clearOrders');
             commit('clearUser');
         }
     },

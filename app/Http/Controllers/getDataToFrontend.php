@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\BillingData;
+use App\Orders;
 use App\Products;
+use App\Promocodes;
+use App\Http\Resources\Promocodes as PromocodesResource;
 use App\Http\Resources\Products as ProductsResource;
-use Illuminate\Http\Request;
+use App\Http\Resources\Orders as OrdersResource;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
 class getDataToFrontend extends Controller
 {
+    use AuthenticatesUsers;
     /**
      * @return AnonymousResourceCollection
      */
@@ -23,7 +28,19 @@ class getDataToFrontend extends Controller
      */
     public function getOrders()
     {
-        return OrdersResource::collection(Orders::all()->where());
+        if (Auth::check()) {
+            return OrdersResource::collection(Orders::select('id', 'address', 'description', 'value', 'amount')->where('email', Auth::user()->email)->get());
+        }
+    }
+
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function getPromocodes()
+    {
+        if (Auth::check()) {
+            return PromocodesResource::collection(Promocodes::all()->where('email', Auth::user()->email));
+        }
     }
 
 }

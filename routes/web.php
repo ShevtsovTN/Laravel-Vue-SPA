@@ -18,6 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
+Route::get('/getPromo', 'getDataToFrontend@getPromocodes');
+Route::get('/getOrders', 'getDataToFrontend@getOrders');
 Route::get('/auth', 'UserController@auth');
 Route::get('/{any}', function () {
     return view('welcome');

@@ -19,7 +19,6 @@
             <li class="list-group-item d-flex justify-content-between bg-light">
                 <div class="text-success">
                     <h6 class="my-0">Promo code</h6>
-                    <small>{{ promocode }}</small>
                 </div>
                 <span class="text-success">-{{ discount }}{{ currencyLabel }}</span>
             </li>
@@ -32,9 +31,16 @@
               @submit.prevent="onSubmit"
         >
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Promo code">
+                <select name="promocodes" v-model="promo" class="custom-select d-block" id="promocodes">
+                    <option value="">Choose...</option>
+                    <option v-for="promocode in promocodes"
+                            :key="promocode.id"
+                            :value="promocode.value"
+                    >{{ promocode.amount }}
+                    </option>
+                </select>
                 <div class="input-group-append">
-                    <button type="submit"  class="btn btn-secondary">Redeem</button>
+                    <button @click="getDiscount"  class="btn btn-secondary">Redeem</button>
                 </div>
             </div>
             <div class="container-fluid">
@@ -51,13 +57,21 @@
         data: function () {
             return {
                 amount: 0,
-                promocode: '',
                 discount: 0,
+                promo: 0,
                 currency: '',
                 currencyLabel: ''
             }
         },
+        mounted () {
+            this.$store.commit('setLoading', true);
+            this.$store.dispatch('getPromo');
+            this.$store.commit('setLoading', false);
+        },
         computed: {
+            promocodes () {
+                return this.$store.getters.promo;
+            },
             userCart() {
                 return this.$store.getters.productsInCart;
             },
@@ -69,8 +83,11 @@
             }
         },
         methods: {
-            getDiscount: function () {
+            onSubmit: function () {
 
+            },
+            getDiscount: function () {
+                this.discount = this.totalAmount * (100 - this.promo) / 100
             },
             clearCart: function () {
                 this.$store.dispatch('clearCart');

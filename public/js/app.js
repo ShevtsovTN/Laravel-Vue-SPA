@@ -2767,18 +2767,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "usercart",
   data: function data() {
     return {
       amount: 0,
-      promocode: '',
       discount: 0,
+      promo: 0,
       currency: '',
       currencyLabel: ''
     };
   },
+  mounted: function mounted() {
+    this.$store.commit('setLoading', true);
+    this.$store.dispatch('getPromo');
+    this.$store.commit('setLoading', false);
+  },
   computed: {
+    promocodes: function promocodes() {
+      return this.$store.getters.promo;
+    },
     userCart: function userCart() {
       return this.$store.getters.productsInCart;
     },
@@ -2790,7 +2804,10 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    getDiscount: function getDiscount() {},
+    onSubmit: function onSubmit() {},
+    getDiscount: function getDiscount() {
+      this.discount = this.totalAmount * (100 - this.promo) / 100;
+    },
     clearCart: function clearCart() {
       this.$store.dispatch('clearCart');
     }
@@ -2958,6 +2975,13 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     orders: function orders() {
       return this.$store.getters.getOrders;
+    }
+  },
+  mounted: function mounted() {
+    if (!this.$store.getters.getOrders) {
+      this.$store.commit('setLoading', true);
+      this.$store.dispatch('getOrders');
+      this.$store.commit('setLoading', false);
     }
   }
 });
@@ -41847,11 +41871,7 @@ var render = function() {
               "list-group-item d-flex justify-content-between bg-light"
           },
           [
-            _c("div", { staticClass: "text-success" }, [
-              _c("h6", { staticClass: "my-0" }, [_vm._v("Promo code")]),
-              _vm._v(" "),
-              _c("small", [_vm._v(_vm._s(_vm.promocode))])
-            ]),
+            _vm._m(0),
             _vm._v(" "),
             _c("span", { staticClass: "text-success" }, [
               _vm._v("-" + _vm._s(_vm.discount) + _vm._s(_vm.currencyLabel))
@@ -41886,7 +41906,61 @@ var render = function() {
         }
       },
       [
-        _vm._m(0),
+        _c("div", { staticClass: "input-group" }, [
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.promo,
+                  expression: "promo"
+                }
+              ],
+              staticClass: "custom-select d-block",
+              attrs: { name: "promocodes", id: "promocodes" },
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.promo = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                }
+              }
+            },
+            [
+              _c("option", { attrs: { value: "" } }, [_vm._v("Choose...")]),
+              _vm._v(" "),
+              _vm._l(_vm.promocodes, function(promocode) {
+                return _c(
+                  "option",
+                  { key: promocode.id, domProps: { value: promocode.value } },
+                  [_vm._v(_vm._s(promocode.amount) + "\n                ")]
+                )
+              })
+            ],
+            2
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "input-group-append" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary",
+                on: { click: _vm.getDiscount }
+              },
+              [_vm._v("Redeem")]
+            )
+          ])
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "container-fluid" }, [
           _c(
@@ -41907,19 +41981,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group" }, [
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", placeholder: "Promo code" }
-      }),
-      _vm._v(" "),
-      _c("div", { staticClass: "input-group-append" }, [
-        _c(
-          "button",
-          { staticClass: "btn btn-secondary", attrs: { type: "submit" } },
-          [_vm._v("Redeem")]
-        )
-      ])
+    return _c("div", { staticClass: "text-success" }, [
+      _c("h6", { staticClass: "my-0" }, [_vm._v("Promo code")])
     ])
   }
 ]
@@ -61911,25 +61974,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    dataOrders: [{
-      id: 1,
-      address: 'address №1',
-      description: 'description №1',
-      value: 1,
-      amount: 1
-    }, {
-      id: 2,
-      address: 'address №2',
-      description: 'description №2',
-      value: 2,
-      amount: 2
-    }, {
-      id: 3,
-      address: 'address №3',
-      description: 'description №3',
-      value: 3,
-      amount: 3
-    }]
+    dataOrders: null
   },
   mutations: {
     getOrdersToCatalog: function getOrdersToCatalog(state, payload) {
@@ -61938,6 +61983,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       state.dataOrders = payload;
+    },
+    clearOrders: function clearOrders(state) {
+      state.dataOrders = null;
     }
   },
   actions: {
@@ -61950,7 +61998,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 commit = _ref.commit;
                 _context.next = 3;
-                return axios.get('/api/getOrders').then(function (response) {
+                return axios.get('/getOrders').then(function (response) {
                   commit('getOrdersToCatalog', response.data.data);
                 });
 
@@ -61981,6 +62029,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
     payments: [{
@@ -61992,13 +62048,46 @@ __webpack_require__.r(__webpack_exports__);
     }, {
       title: 'PayPal',
       id: 'paypal'
-    }]
+    }],
+    promo: null
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    getPromo: function getPromo(state, payload) {
+      state.promo = payload;
+    }
+  },
+  actions: {
+    getPromo: function getPromo(_ref) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var commit;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                commit = _ref.commit;
+                _context.next = 3;
+                return axios.get('/getPromo').then(function (response) {
+                  commit('getPromo', response.data.data);
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    activatePromo: function activatePromo() {},
+    getDiscount: function getDiscount() {},
+    buy: function buy() {}
+  },
   getters: {
     payments: function payments(state) {
       return state.payments;
+    },
+    promo: function promo(state) {
+      return state.promo;
     }
   }
 });
@@ -62393,9 +62482,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return axios.post('/logout');
 
               case 3:
+                commit('clearOrders');
                 commit('clearUser');
 
-              case 4:
+              case 5:
               case "end":
                 return _context4.stop();
             }
