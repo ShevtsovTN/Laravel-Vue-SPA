@@ -2772,22 +2772,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "usercart",
   data: function data() {
     return {
       amount: 0,
-      discount: 0,
+      amountWithDiscount: 0,
       promo: 0,
       currency: '',
       currencyLabel: ''
     };
   },
   mounted: function mounted() {
-    this.$store.commit('setLoading', true);
-    this.$store.dispatch('getPromo');
-    this.$store.commit('setLoading', false);
+    if (!this.$store.getters.promo) {
+      this.$store.commit('setLoading', true);
+      this.$store.dispatch('getPromo');
+      this.$store.commit('setLoading', false);
+    }
   },
   computed: {
     promocodes: function promocodes() {
@@ -2801,12 +2802,15 @@ __webpack_require__.r(__webpack_exports__);
     },
     totalValue: function totalValue() {
       return this.$store.getters.totalValueInCart;
+    },
+    mainCurrencyRate: function mainCurrencyRate() {
+      return this.$store.getters.currencyMainRate;
     }
   },
   methods: {
     onSubmit: function onSubmit() {},
     getDiscount: function getDiscount() {
-      this.discount = this.totalAmount * (100 - this.promo) / 100;
+      this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100;
     },
     clearCart: function clearCart() {
       this.$store.dispatch('clearCart');
@@ -2884,9 +2888,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "navigation",
+  data: function data() {
+    return {
+      rateCurrency: 1
+    };
+  },
   computed: {
+    currencies: function currencies() {
+      return this.$store.getters.currenciesArr;
+    },
     isUserLoggedIn: function isUserLoggedIn() {
       return this.$store.getters.isUserLoggedIn;
     },
@@ -2925,6 +2949,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     onLogout: function onLogout() {
       this.$store.dispatch('Logout');
+    },
+    setCurrencyMain: function setCurrencyMain() {
+      this.$store.dispatch('setMainCurrency', this.rateCurrency);
     }
   }
 });
@@ -3089,6 +3116,11 @@ __webpack_require__.r(__webpack_exports__);
     return {
       productIsEmpty: false
     };
+  },
+  computed: {
+    mainCurrencyRate: function mainCurrencyRate() {
+      return this.$store.getters.currencyMainRate;
+    }
   },
   methods: {
     addToCart: function addToCart(product) {
@@ -7555,7 +7587,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.cart-viewer[data-v-5ce47ec2] {\n    padding: 0 5px 0 5px;\n    margin-left: 3px;\n}\n", ""]);
+exports.push([module.i, "\n.cart-viewer[data-v-5ce47ec2] {\n    padding: 0 5px 0 5px;\n    margin-left: 3px;\n}\n@media (max-width: 575.98px) {\n.currency-nav[data-v-5ce47ec2] {\n        width: 20% !important;\n}\n}\n", ""]);
 
 // exports
 
@@ -41858,11 +41890,29 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("span", { staticClass: "text-muted" }, [
-                _vm._v(_vm._s(_vm.currencyLabel) + _vm._s(product.amount))
+                _vm._v(
+                  _vm._s(_vm.currencyLabel) +
+                    _vm._s(product.amount * _vm.mainCurrencyRate)
+                )
               ])
             ]
           )
         }),
+        _vm._v(" "),
+        _c(
+          "li",
+          { staticClass: "list-group-item d-flex justify-content-between" },
+          [
+            _c("span", [_vm._v("Total (" + _vm._s(_vm.currency) + ")")]),
+            _vm._v(" "),
+            _c("strong", [
+              _vm._v(
+                _vm._s(_vm.currencyLabel) +
+                  _vm._s(_vm.totalAmount * _vm.mainCurrencyRate)
+              )
+            ])
+          ]
+        ),
         _vm._v(" "),
         _c(
           "li",
@@ -41874,19 +41924,10 @@ var render = function() {
             _vm._m(0),
             _vm._v(" "),
             _c("span", { staticClass: "text-success" }, [
-              _vm._v("-" + _vm._s(_vm.discount) + _vm._s(_vm.currencyLabel))
-            ])
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "li",
-          { staticClass: "list-group-item d-flex justify-content-between" },
-          [
-            _c("span", [_vm._v("Total (" + _vm._s(_vm.currency) + ")")]),
-            _vm._v(" "),
-            _c("strong", [
-              _vm._v(_vm._s(_vm.currencyLabel) + _vm._s(_vm.totalAmount))
+              _vm._v(
+                _vm._s(_vm.amountWithDiscount * this.mainCurrencyRate) +
+                  _vm._s(_vm.currencyLabel)
+              )
             ])
           ]
         )
@@ -41982,7 +42023,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "text-success" }, [
-      _c("h6", { staticClass: "my-0" }, [_vm._v("Promo code")])
+      _c("h6", { staticClass: "my-0" }, [_vm._v("Price including discount")])
     ])
   }
 ]
@@ -42126,6 +42167,66 @@ var render = function() {
                 ],
                 1
               ),
+              _vm._v(" "),
+              _vm.isUserLoggedIn
+                ? _c(
+                    "li",
+                    { staticClass: "nav-item d-flex align-items-center" },
+                    [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.rateCurrency,
+                              expression: "rateCurrency"
+                            }
+                          ],
+                          staticClass:
+                            "currency-nav form-control mw-25 form-control-sm ml-sm-2 custom-select",
+                          attrs: { id: "currency", name: "currency" },
+                          on: {
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.rateCurrency = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              _vm.setCurrencyMain
+                            ]
+                          }
+                        },
+                        _vm._l(_vm.currencies, function(currency) {
+                          return _c(
+                            "option",
+                            {
+                              key: currency.title,
+                              domProps: { value: currency.rates }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(currency.title) +
+                                  "\n                    "
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _vm.isUserLoggedIn
                 ? _c(
@@ -42367,7 +42468,7 @@ var render = function() {
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.product.value))]),
     _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.product.amount))]),
+    _c("td", [_vm._v(_vm._s(_vm.product.amount * _vm.mainCurrencyRate))]),
     _vm._v(" "),
     _c("td", [
       _c(
@@ -62049,11 +62150,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       title: 'PayPal',
       id: 'paypal'
     }],
-    promo: null
+    promo: null,
+    mainCurrency: '',
+    mainCurrencyRate: 1,
+    currencies: [],
+    productsInCart: [],
+    totalAmountCart: 0,
+    totalValueCart: 0
   },
   mutations: {
-    getPromo: function getPromo(state, payload) {
+    setPromo: function setPromo(state, payload) {
       state.promo = payload;
+    },
+    setCurrency: function setCurrency(state, payload) {
+      state.currencies = payload;
+    },
+    setMainCurrencyRate: function setMainCurrencyRate(state, payload) {
+      state.mainCurrencyRate = payload;
+    },
+    setProductOnUserCart: function setProductOnUserCart(state, payload) {
+      state.productsInCart.push(payload);
+      state.totalAmountCart += payload.amount * state.mainCurrencyRate;
+      state.totalValueCart++;
+    },
+    clearProductInCart: function clearProductInCart(state) {
+      state.productsInCart = [];
+      state.totalAmountCart = 0;
+      state.totalValueCart = 0;
     }
   },
   actions: {
@@ -62067,7 +62190,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref.commit;
                 _context.next = 3;
                 return axios.get('/getPromo').then(function (response) {
-                  commit('getPromo', response.data.data);
+                  commit('setPromo', response.data.data);
                 });
 
               case 3:
@@ -62079,8 +62202,41 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     activatePromo: function activatePromo() {},
+    getCurrency: function getCurrency(_ref2) {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var commit;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                commit = _ref2.commit;
+                _context2.next = 3;
+                return axios.get('/api/getCurrencyRates').then(function (response) {
+                  commit('setCurrency', response.data);
+                });
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    setMainCurrency: function setMainCurrency(_ref3, payload) {
+      var commit = _ref3.commit;
+      commit('setMainCurrencyRate', payload);
+    },
     getDiscount: function getDiscount() {},
-    buy: function buy() {}
+    buy: function buy() {},
+    addToCart: function addToCart(_ref4, payload) {
+      var commit = _ref4.commit;
+      commit('setProductOnUserCart', payload);
+    },
+    clearCart: function clearCart(_ref5) {
+      var commit = _ref5.commit;
+      commit('clearProductInCart');
+    }
   },
   getters: {
     payments: function payments(state) {
@@ -62088,6 +62244,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     promo: function promo(state) {
       return state.promo;
+    },
+    currenciesArr: function currenciesArr(state) {
+      return state.currencies;
+    },
+    currencyMain: function currencyMain(state) {
+      return state.mainCurrency;
+    },
+    currencyMainRate: function currencyMainRate(state) {
+      return state.mainCurrencyRate;
+    },
+    productsInCart: function productsInCart(state) {
+      return state.productsInCart;
+    },
+    totalAmountInCart: function totalAmountInCart(state) {
+      return state.totalAmountCart;
+    },
+    totalValueInCart: function totalValueInCart(state) {
+      return state.totalValueCart;
     }
   }
 });
@@ -62113,28 +62287,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   state: {
-    dataProducts: [],
-    productsInCart: [],
-    totalAmountCart: 0,
-    totalValueCart: 0
+    dataProducts: []
   },
   mutations: {
-    getProductToCatalog: function getProductToCatalog(state, payload) {
+    setProductToCatalog: function setProductToCatalog(state, payload) {
       for (var key in payload) {
         payload[key].amount = payload[key].amount / 100;
       }
 
       state.dataProducts = payload;
-    },
-    getProductOnUserCart: function getProductOnUserCart(state, payload) {
-      state.productsInCart.push(payload);
-      state.totalAmountCart += payload.amount;
-      state.totalValueCart++;
-    },
-    clearProductInCart: function clearProductInCart(state) {
-      state.productsInCart = [];
-      state.totalAmountCart = 0;
-      state.totalValueCart = 0;
     }
   },
   actions: {
@@ -62148,7 +62309,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 commit = _ref.commit;
                 _context.next = 3;
                 return axios.get('/api/getProducts').then(function (response) {
-                  commit('getProductToCatalog', response.data.data);
+                  commit('setProductToCatalog', response.data.data);
                 });
 
               case 3:
@@ -62158,28 +62319,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
-    },
-    addToCart: function addToCart(_ref2, payload) {
-      var commit = _ref2.commit;
-      commit('getProductOnUserCart', payload);
-    },
-    clearCart: function clearCart(_ref3) {
-      var commit = _ref3.commit;
-      commit('clearProductInCart');
     }
   },
   getters: {
     dataProducts: function dataProducts(state) {
       return state.dataProducts;
-    },
-    productsInCart: function productsInCart(state) {
-      return state.productsInCart;
-    },
-    totalAmountInCart: function totalAmountInCart(state) {
-      return state.totalAmountCart;
-    },
-    totalValueInCart: function totalValueInCart(state) {
-      return state.totalValueCart;
     }
   }
 });
@@ -62564,10 +62708,11 @@ var app = new Vue({
   },
   router: _routes__WEBPACK_IMPORTED_MODULE_2__["default"],
   store: _store__WEBPACK_IMPORTED_MODULE_3__["default"],
-  created: function created() {
+  mounted: function mounted() {
     this.$store.commit('setLoading', true);
     this.$store.dispatch('authUser');
     this.$store.dispatch('getProduct');
+    this.$store.dispatch('getCurrency');
     this.$store.commit('setLoading', false);
   }
 });

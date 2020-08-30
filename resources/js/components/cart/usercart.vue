@@ -13,18 +13,17 @@
                     <h6 class="my-0">{{ product.name }}</h6>
                     <small class="text-muted">{{ product.description }}</small>
                 </div>
-                <span class="text-muted">{{ currencyLabel }}{{ product.amount }}</span>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between bg-light">
-                <div class="text-success">
-                    <h6 class="my-0">Promo code</h6>
-                </div>
-                <span class="text-success">-{{ discount }}{{ currencyLabel }}</span>
+                <span class="text-muted">{{ currencyLabel }}{{ product.amount * mainCurrencyRate}}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total ({{ currency }})</span>
-                <strong>{{ currencyLabel }}{{ totalAmount }}</strong>
+                <strong>{{ currencyLabel }}{{ totalAmount * mainCurrencyRate}}</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between bg-light">
+                <div class="text-success">
+                    <h6 class="my-0">Price including discount</h6>
+                </div>
+                <span class="text-success">{{ amountWithDiscount * this.mainCurrencyRate }}{{ currencyLabel }}</span>
             </li>
         </ul>
         <form class="card p-2"
@@ -57,16 +56,18 @@
         data: function () {
             return {
                 amount: 0,
-                discount: 0,
+                amountWithDiscount: 0,
                 promo: 0,
                 currency: '',
                 currencyLabel: ''
             }
         },
         mounted () {
-            this.$store.commit('setLoading', true);
-            this.$store.dispatch('getPromo');
-            this.$store.commit('setLoading', false);
+            if (!this.$store.getters.promo) {
+                this.$store.commit('setLoading', true);
+                this.$store.dispatch('getPromo');
+                this.$store.commit('setLoading', false);
+            }
         },
         computed: {
             promocodes () {
@@ -80,6 +81,9 @@
             },
             totalValue() {
                 return this.$store.getters.totalValueInCart;
+            },
+            mainCurrencyRate () {
+                return this.$store.getters.currencyMainRate;
             }
         },
         methods: {
@@ -87,7 +91,7 @@
 
             },
             getDiscount: function () {
-                this.discount = this.totalAmount * (100 - this.promo) / 100
+                this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100
             },
             clearCart: function () {
                 this.$store.dispatch('clearCart');

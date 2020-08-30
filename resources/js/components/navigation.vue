@@ -17,6 +17,19 @@
                         {{ cart.title }} <span class="cart-viewer rounded-circle bg-secondary text-light">{{ totalValueInCart }}</span>
                     </router-link>
                 </li>
+                <li class="nav-item d-flex align-items-center" v-if="isUserLoggedIn">
+                    <select
+                        v-model="rateCurrency"
+                        @change="setCurrencyMain"
+                        id="currency" name="currency"
+                        class="currency-nav form-control mw-25 form-control-sm ml-sm-2 custom-select"
+                    >
+                        <option
+                            v-for="currency in currencies" :key="currency.title" :value="currency.rates">
+                            {{currency.title}}
+                        </option>
+                    </select>
+                </li>
                 <router-link
                         v-if="isUserLoggedIn"
                         class="nav-item ml-sm-auto"
@@ -27,7 +40,6 @@
                         >Logout {{ username }}</a>
                 </router-link>
             </ul>
-
         </div>
     </nav>
 </template>
@@ -35,7 +47,15 @@
 <script>
     export default {
         name: "navigation",
+        data () {
+            return {
+                rateCurrency: 1
+            }
+        },
         computed: {
+            currencies () {
+                return this.$store.getters.currenciesArr
+            },
             isUserLoggedIn () {
                 return this.$store.getters.isUserLoggedIn;
             },
@@ -67,14 +87,22 @@
         methods: {
             onLogout () {
                 this.$store.dispatch('Logout');
+            },
+            setCurrencyMain () {
+                this.$store.dispatch('setMainCurrency', this.rateCurrency);
             }
         }
     }
 </script>
 
 <style scoped>
-.cart-viewer {
-    padding: 0 5px 0 5px;
-    margin-left: 3px;
-}
+    .cart-viewer {
+        padding: 0 5px 0 5px;
+        margin-left: 3px;
+    }
+    @media (max-width: 575.98px) {
+        .currency-nav {
+            width: 20% !important;
+        }
+    }
 </style>

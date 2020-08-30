@@ -14,27 +14,63 @@ export default {
                 id: 'paypal'
             }
         ],
-        promo: null
+        promo: null,
+        mainCurrency: '',
+        mainCurrencyRate: 1,
+        currencies: [],
+        productsInCart: [],
+        totalAmountCart: 0,
+        totalValueCart: 0,
     },
     mutations: {
-        getPromo (state, payload) {
+        setPromo (state, payload) {
             state.promo = payload;
+        },
+        setCurrency (state, payload) {
+            state.currencies = payload;
+        },
+        setMainCurrencyRate(state, payload) {
+            state.mainCurrencyRate = payload;
+        },
+        setProductOnUserCart (state, payload) {
+            state.productsInCart.push(payload);
+            state.totalAmountCart += (payload.amount * state.mainCurrencyRate);
+            state.totalValueCart++;
+        },
+        clearProductInCart (state) {
+            state.productsInCart = [];
+            state.totalAmountCart = 0;
+            state.totalValueCart = 0;
         }
     },
     actions: {
         async getPromo ({commit}) {
             await axios.get('/getPromo').then((response) => {
-                commit('getPromo', response.data.data)
+                commit('setPromo', response.data.data)
             })
         },
         activatePromo () {
 
+        },
+        async getCurrency({commit}) {
+            await axios.get('/api/getCurrencyRates').then((response) => {
+                commit('setCurrency', response.data)
+            })
+        },
+        setMainCurrency({commit}, payload) {
+            commit('setMainCurrencyRate', payload)
         },
         getDiscount () {
 
         },
         buy () {
 
+        },
+        addToCart ({commit}, payload) {
+            commit('setProductOnUserCart', payload);
+        },
+        clearCart ({commit}) {
+            commit('clearProductInCart');
         }
     },
     getters: {
@@ -43,6 +79,24 @@ export default {
         },
         promo (state) {
             return state.promo;
+        },
+        currenciesArr (state) {
+            return state.currencies;
+        },
+        currencyMain (state) {
+            return state.mainCurrency;
+        },
+        currencyMainRate (state) {
+            return state.mainCurrencyRate;
+        },
+        productsInCart (state) {
+            return state.productsInCart;
+        },
+        totalAmountInCart (state) {
+            return state.totalAmountCart;
+        },
+        totalValueInCart (state) {
+            return state.totalValueCart;
         }
     }
 }

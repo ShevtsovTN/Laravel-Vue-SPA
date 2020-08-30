@@ -4,7 +4,7 @@
         <td>{{ product.name }}</td>
         <td>{{ product.description }}</td>
         <td>{{ product.value }}</td>
-        <td>{{ product.amount }}</td>
+        <td>{{ product.amount  * mainCurrencyRate }}</td>
         <td>
             <button class="btn btn-success"
                     :disabled="productIsEmpty"
@@ -23,6 +23,11 @@
         data: function() {
             return {
                 productIsEmpty: false,
+            }
+        },
+        computed: {
+            mainCurrencyRate () {
+                return this.$store.getters.currencyMainRate;
             }
         },
         methods: {

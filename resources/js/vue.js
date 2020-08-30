@@ -44,10 +44,11 @@ const app = new Vue({
     render: h => h(App),
     router: router,
     store: store,
-    created () {
+    mounted () {
         this.$store.commit('setLoading', true);
         this.$store.dispatch('authUser');
         this.$store.dispatch('getProduct');
+        this.$store.dispatch('getCurrency');
         this.$store.commit('setLoading', false);
     }
 });
