@@ -2811,6 +2811,7 @@ __webpack_require__.r(__webpack_exports__);
     onSubmit: function onSubmit() {},
     getDiscount: function getDiscount() {
       this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100;
+      this.amountWithDiscount.toFixed(2);
     },
     clearCart: function clearCart() {
       this.$store.dispatch('clearCart');
@@ -41892,7 +41893,7 @@ var render = function() {
               _c("span", { staticClass: "text-muted" }, [
                 _vm._v(
                   _vm._s(_vm.currencyLabel) +
-                    _vm._s(product.amount * _vm.mainCurrencyRate)
+                    _vm._s((product.amount * _vm.mainCurrencyRate).toFixed(2))
                 )
               ])
             ]
@@ -41908,7 +41909,7 @@ var render = function() {
             _c("strong", [
               _vm._v(
                 _vm._s(_vm.currencyLabel) +
-                  _vm._s(_vm.totalAmount * _vm.mainCurrencyRate)
+                  _vm._s((_vm.totalAmount * _vm.mainCurrencyRate).toFixed(2))
               )
             ])
           ]
@@ -41925,8 +41926,9 @@ var render = function() {
             _vm._v(" "),
             _c("span", { staticClass: "text-success" }, [
               _vm._v(
-                _vm._s(_vm.amountWithDiscount * this.mainCurrencyRate) +
-                  _vm._s(_vm.currencyLabel)
+                _vm._s(
+                  (_vm.amountWithDiscount * this.mainCurrencyRate).toFixed(2)
+                ) + _vm._s(_vm.currencyLabel)
               )
             ])
           ]
@@ -42468,7 +42470,9 @@ var render = function() {
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.product.value))]),
     _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.product.amount * _vm.mainCurrencyRate))]),
+    _c("td", [
+      _vm._v(_vm._s((_vm.product.amount * _vm.mainCurrencyRate).toFixed(2)))
+    ]),
     _vm._v(" "),
     _c("td", [
       _c(
@@ -62258,7 +62262,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return state.productsInCart;
     },
     totalAmountInCart: function totalAmountInCart(state) {
-      return state.totalAmountCart;
+      return state.totalAmountCart.toFixed(2);
     },
     totalValueInCart: function totalValueInCart(state) {
       return state.totalValueCart;
@@ -62293,6 +62297,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     setProductToCatalog: function setProductToCatalog(state, payload) {
       for (var key in payload) {
         payload[key].amount = payload[key].amount / 100;
+        payload[key].amount.toFixed(2);
       }
 
       state.dataProducts = payload;

@@ -4,7 +4,7 @@
         <td>{{ product.name }}</td>
         <td>{{ product.description }}</td>
         <td>{{ product.value }}</td>
-        <td>{{ product.amount  * mainCurrencyRate }}</td>
+        <td>{{ (product.amount  * mainCurrencyRate).toFixed(2) }}</td>
         <td>
             <button class="btn btn-success"
                     :disabled="productIsEmpty"

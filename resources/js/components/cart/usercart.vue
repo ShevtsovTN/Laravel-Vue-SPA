@@ -13,17 +13,17 @@
                     <h6 class="my-0">{{ product.name }}</h6>
                     <small class="text-muted">{{ product.description }}</small>
                 </div>
-                <span class="text-muted">{{ currencyLabel }}{{ product.amount * mainCurrencyRate}}</span>
+                <span class="text-muted">{{ currencyLabel }}{{ (product.amount * mainCurrencyRate).toFixed(2) }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total ({{ currency }})</span>
-                <strong>{{ currencyLabel }}{{ totalAmount * mainCurrencyRate}}</strong>
+                <strong>{{ currencyLabel }}{{ (totalAmount * mainCurrencyRate).toFixed(2) }}</strong>
             </li>
             <li class="list-group-item d-flex justify-content-between bg-light">
                 <div class="text-success">
                     <h6 class="my-0">Price including discount</h6>
                 </div>
-                <span class="text-success">{{ amountWithDiscount * this.mainCurrencyRate }}{{ currencyLabel }}</span>
+                <span class="text-success">{{ (amountWithDiscount * this.mainCurrencyRate).toFixed(2) }}{{ currencyLabel }}</span>
             </li>
         </ul>
         <form class="card p-2"
@@ -91,7 +91,8 @@
 
             },
             getDiscount: function () {
-                this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100
+                this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100;
+                this.amountWithDiscount.toFixed(2);
             },
             clearCart: function () {
                 this.$store.dispatch('clearCart');

@@ -6,6 +6,7 @@ export default {
         setProductToCatalog (state, payload) {
             for (let key in payload) {
                 payload[key].amount = payload[key].amount / 100;
+                payload[key].amount.toFixed(2);
             }
             state.dataProducts = payload;
         }

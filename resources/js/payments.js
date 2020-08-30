@@ -93,7 +93,7 @@ export default {
             return state.productsInCart;
         },
         totalAmountInCart (state) {
-            return state.totalAmountCart;
+            return state.totalAmountCart.toFixed(2);
         },
         totalValueInCart (state) {
             return state.totalValueCart;
