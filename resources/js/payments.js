@@ -20,6 +20,7 @@ export default {
         currencies: [],
         productsInCart: [],
         totalAmountCart: 0,
+        amountWithDiscount: 0,
         totalValueCart: 0,
     },
     mutations: {
@@ -34,13 +35,18 @@ export default {
         },
         setProductOnUserCart (state, payload) {
             state.productsInCart.push(payload);
-            state.totalAmountCart += (payload.amount * state.mainCurrencyRate);
+            state.totalAmountCart += (payload.amount);
+            state.amountWithDiscount = state.totalAmountCart;
             state.totalValueCart++;
         },
         clearProductInCart (state) {
             state.productsInCart = [];
             state.totalAmountCart = 0;
             state.totalValueCart = 0;
+            state.amountWithDiscount = 0;
+        },
+        setTotalAmountWithDiscountCart (state, payload) {
+            state.amountWithDiscount = payload;
         }
     },
     actions: {
@@ -60,11 +66,13 @@ export default {
         setMainCurrency({commit}, payload) {
             commit('setMainCurrencyRate', payload)
         },
-        getDiscount () {
-
+        getDiscount ({commit}, payload) {
+            commit('setTotalAmountWithDiscountCart', payload)
         },
-        buy () {
+        buy ({commit}, payload) {
+            axios.post('/addOrders', payload).then((response) => {
 
+            })
         },
         addToCart ({commit}, payload) {
             commit('setProductOnUserCart', payload);
@@ -93,10 +101,13 @@ export default {
             return state.productsInCart;
         },
         totalAmountInCart (state) {
-            return state.totalAmountCart.toFixed(2);
+            return state.totalAmountCart;
         },
         totalValueInCart (state) {
             return state.totalValueCart;
+        },
+        amountWithDiscount (state) {
+            return state.amountWithDiscount;
         }
     }
 }

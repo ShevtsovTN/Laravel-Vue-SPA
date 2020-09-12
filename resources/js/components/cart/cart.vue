@@ -129,7 +129,7 @@
                         </div>
                     </div>
                     <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" :disabled="canBuy" type="submit">Continue to checkout</button>
+                    <button class="btn btn-primary btn-lg btn-block" @click="buy" :disabled="canBuy">Continue to checkout</button>
                 </div>
             </div>
         </div>
@@ -152,6 +152,27 @@
                 zipcode: '',
                 paymentMethod: '',
                 saveData: false
+            }
+        },
+        methods: {
+            buy () {
+                const Order = {
+                    firstname: this.firstname,
+                    lastname: this.lastname,
+                    username: this.username,
+                    email: this.email,
+                    address: this.address,
+                    address2: this.address2,
+                    country: this.country,
+                    zipcode: this.zipcode,
+                    paymentMethod: this.paymentMethod,
+                    saveData: this.saveData,
+                    products: this.$store.getters.productsInCart,
+                    amount: this.$store.getters.totalAmountInCart,
+                    value: this.$store.getters.totalValueInCart,
+                    amountWithDiscount: this.$store.getters.amountWithDiscount * this.$store.getters.currencyMainRate
+                };
+                this.$store.dispatch('buy', Order);
             }
         },
         computed: {

@@ -44,11 +44,11 @@ const app = new Vue({
     render: h => h(App),
     router: router,
     store: store,
-    mounted () {
+    async mounted () {
         this.$store.commit('setLoading', true);
-        this.$store.dispatch('authUser');
-        this.$store.dispatch('getProduct');
-        this.$store.dispatch('getCurrency');
+        await this.$store.dispatch('authUser');
+        await this.$store.dispatch('getProduct');
+        await this.$store.dispatch('getCurrency');
         this.$store.commit('setLoading', false);
     }
 });

@@ -62,7 +62,7 @@ class getDataToFrontend extends Controller
             foreach ($dataFormDB as $index => $item) {
                 $data[] = [
                     'title' => $item['symbols'],
-                    'rates' => $item['rates']
+                    'rates' => (float)$item['rates']
                 ];
             }
         } else {
@@ -70,7 +70,7 @@ class getDataToFrontend extends Controller
             foreach ($response['rates'] as $index => $rate) {
                 $data[] = [
                     'title' => $index,
-                    'rates' => $rate
+                    'rates' => (float)$rate
                 ];
                 DB::table('currencies')->update([
                     'updated_at' => date('Y-m-d H:i:s'),

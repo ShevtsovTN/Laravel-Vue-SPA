@@ -37,11 +37,9 @@
             }
         },
         mounted () {
-            if (!this.$store.getters.getOrders) {
-                this.$store.commit('setLoading', true);
-                this.$store.dispatch('getOrders');
-                this.$store.commit('setLoading', false);
-            }
+            this.$store.commit('setLoading', true);
+            this.$store.dispatch('getOrders');
+            this.$store.commit('setLoading', false);
         }
     }
 </script>

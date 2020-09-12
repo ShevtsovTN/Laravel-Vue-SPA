@@ -18,6 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
+Route::post('/addOrders', 'getDataFromFrontend@buyProductFromCart');
 Route::get('/getPromo', 'getDataToFrontend@getPromocodes');
 Route::get('/getOrders', 'getDataToFrontend@getOrders');
 Route::get('/auth', 'UserController@auth');

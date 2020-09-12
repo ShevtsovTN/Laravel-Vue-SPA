@@ -2603,6 +2603,27 @@ __webpack_require__.r(__webpack_exports__);
       saveData: false
     };
   },
+  methods: {
+    buy: function buy() {
+      var Order = {
+        firstname: this.firstname,
+        lastname: this.lastname,
+        username: this.username,
+        email: this.email,
+        address: this.address,
+        address2: this.address2,
+        country: this.country,
+        zipcode: this.zipcode,
+        paymentMethod: this.paymentMethod,
+        saveData: this.saveData,
+        products: this.$store.getters.productsInCart,
+        amount: this.$store.getters.totalAmountInCart,
+        value: this.$store.getters.totalValueInCart,
+        amountWithDiscount: this.$store.getters.amountWithDiscount * this.$store.getters.currencyMainRate
+      };
+      this.$store.dispatch('buy', Order);
+    }
+  },
   computed: {
     canBuy: function canBuy() {
       if (this.$store.getters.totalValueInCart !== 0) {
@@ -2770,14 +2791,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "usercart",
   data: function data() {
     return {
+      flagPromo: false,
       amount: 0,
-      amountWithDiscount: 0,
       promo: 0,
       currency: '',
       currencyLabel: ''
@@ -2805,15 +2824,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     mainCurrencyRate: function mainCurrencyRate() {
       return this.$store.getters.currencyMainRate;
+    },
+    amountWithDiscount: function amountWithDiscount() {
+      return this.$store.getters.amountWithDiscount;
     }
   },
   methods: {
-    onSubmit: function onSubmit() {},
     getDiscount: function getDiscount() {
-      this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100;
-      this.amountWithDiscount.toFixed(2);
+      this.$store.dispatch('getDiscount', this.amountWithDiscount * (100 - this.promo) / 100);
+      this.flagPromo = true;
     },
     clearCart: function clearCart() {
+      this.amountWithDiscount = 0;
       this.$store.dispatch('clearCart');
     }
   }
@@ -3006,11 +3028,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    if (!this.$store.getters.getOrders) {
-      this.$store.commit('setLoading', true);
-      this.$store.dispatch('getOrders');
-      this.$store.commit('setLoading', false);
-    }
+    this.$store.commit('setLoading', true);
+    this.$store.dispatch('getOrders');
+    this.$store.commit('setLoading', false);
   }
 });
 
@@ -41794,7 +41814,8 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary btn-lg btn-block",
-                attrs: { disabled: _vm.canBuy, type: "submit" }
+                attrs: { disabled: _vm.canBuy },
+                on: { click: _vm.buy }
               },
               [_vm._v("Continue to checkout")]
             )
@@ -41927,7 +41948,7 @@ var render = function() {
             _c("span", { staticClass: "text-success" }, [
               _vm._v(
                 _vm._s(
-                  (_vm.amountWithDiscount * this.mainCurrencyRate).toFixed(2)
+                  (_vm.amountWithDiscount * _vm.mainCurrencyRate).toFixed(2)
                 ) + _vm._s(_vm.currencyLabel)
               )
             ])
@@ -41937,86 +41958,75 @@ var render = function() {
       2
     ),
     _vm._v(" "),
-    _c(
-      "form",
-      {
-        staticClass: "card p-2",
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.onSubmit($event)
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "input-group" }, [
-          _c(
-            "select",
-            {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.promo,
-                  expression: "promo"
-                }
-              ],
-              staticClass: "custom-select d-block",
-              attrs: { name: "promocodes", id: "promocodes" },
-              on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.promo = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
-                }
-              }
-            },
-            [
-              _c("option", { attrs: { value: "" } }, [_vm._v("Choose...")]),
-              _vm._v(" "),
-              _vm._l(_vm.promocodes, function(promocode) {
-                return _c(
-                  "option",
-                  { key: promocode.id, domProps: { value: promocode.value } },
-                  [_vm._v(_vm._s(promocode.amount) + "\n                ")]
-                )
-              })
-            ],
-            2
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "input-group-append" }, [
-            _c(
-              "button",
+    _c("div", { staticClass: "card p-2" }, [
+      _c("div", { staticClass: "input-group" }, [
+        _c(
+          "select",
+          {
+            directives: [
               {
-                staticClass: "btn btn-secondary",
-                on: { click: _vm.getDiscount }
-              },
-              [_vm._v("Redeem")]
-            )
-          ])
-        ]),
+                name: "model",
+                rawName: "v-model",
+                value: _vm.promo,
+                expression: "promo"
+              }
+            ],
+            staticClass: "custom-select d-block",
+            attrs: { name: "promocodes", id: "promocodes" },
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.promo = $event.target.multiple
+                  ? $$selectedVal
+                  : $$selectedVal[0]
+              }
+            }
+          },
+          [
+            _c("option", { attrs: { value: "" } }, [_vm._v("Choose...")]),
+            _vm._v(" "),
+            _vm._l(_vm.promocodes, function(promocode) {
+              return _c(
+                "option",
+                { key: promocode.id, domProps: { value: promocode.value } },
+                [_vm._v(_vm._s(promocode.amount) + "\n                ")]
+              )
+            })
+          ],
+          2
+        ),
         _vm._v(" "),
-        _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "input-group-append" }, [
           _c(
             "button",
             {
-              staticClass: "mt-2 btn btn-secondary btn-lg btn-block",
-              on: { click: _vm.clearCart }
+              staticClass: "btn btn-secondary",
+              attrs: { disabled: _vm.flagPromo },
+              on: { click: _vm.getDiscount }
             },
-            [_vm._v("Clear Cart")]
+            [_vm._v("Redeem")]
           )
         ])
-      ]
-    )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "container-fluid" }, [
+        _c(
+          "button",
+          {
+            staticClass: "mt-2 btn btn-secondary btn-lg btn-block",
+            on: { click: _vm.clearCart }
+          },
+          [_vm._v("Clear Cart")]
+        )
+      ])
+    ])
   ])
 }
 var staticRenderFns = [
@@ -62083,10 +62093,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   mutations: {
     getOrdersToCatalog: function getOrdersToCatalog(state, payload) {
-      for (var key in payload) {
-        payload[key].amount = payload[key].amount / 100;
-      }
-
       state.dataOrders = payload;
     },
     clearOrders: function clearOrders(state) {
@@ -62160,6 +62166,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     currencies: [],
     productsInCart: [],
     totalAmountCart: 0,
+    amountWithDiscount: 0,
     totalValueCart: 0
   },
   mutations: {
@@ -62174,13 +62181,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     setProductOnUserCart: function setProductOnUserCart(state, payload) {
       state.productsInCart.push(payload);
-      state.totalAmountCart += payload.amount * state.mainCurrencyRate;
+      state.totalAmountCart += payload.amount;
+      state.amountWithDiscount = state.totalAmountCart;
       state.totalValueCart++;
     },
     clearProductInCart: function clearProductInCart(state) {
       state.productsInCart = [];
       state.totalAmountCart = 0;
       state.totalValueCart = 0;
+      state.amountWithDiscount = 0;
+    },
+    setTotalAmountWithDiscountCart: function setTotalAmountWithDiscountCart(state, payload) {
+      state.amountWithDiscount = payload;
     }
   },
   actions: {
@@ -62231,14 +62243,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var commit = _ref3.commit;
       commit('setMainCurrencyRate', payload);
     },
-    getDiscount: function getDiscount() {},
-    buy: function buy() {},
-    addToCart: function addToCart(_ref4, payload) {
+    getDiscount: function getDiscount(_ref4, payload) {
       var commit = _ref4.commit;
+      commit('setTotalAmountWithDiscountCart', payload);
+    },
+    buy: function buy(_ref5, payload) {
+      var commit = _ref5.commit;
+      axios.post('/addOrders', payload).then(function (response) {});
+    },
+    addToCart: function addToCart(_ref6, payload) {
+      var commit = _ref6.commit;
       commit('setProductOnUserCart', payload);
     },
-    clearCart: function clearCart(_ref5) {
-      var commit = _ref5.commit;
+    clearCart: function clearCart(_ref7) {
+      var commit = _ref7.commit;
       commit('clearProductInCart');
     }
   },
@@ -62262,10 +62280,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return state.productsInCart;
     },
     totalAmountInCart: function totalAmountInCart(state) {
-      return state.totalAmountCart.toFixed(2);
+      return state.totalAmountCart;
     },
     totalValueInCart: function totalValueInCart(state) {
       return state.totalValueCart;
+    },
+    amountWithDiscount: function amountWithDiscount(state) {
+      return state.amountWithDiscount;
     }
   }
 });
@@ -62664,19 +62685,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.vue");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
-/* harmony import */ var vuelidate_src__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuelidate/src */ "./node_modules/vuelidate/src/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.vue");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./store */ "./resources/js/store.js");
+/* harmony import */ var vuelidate_src__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuelidate/src */ "./node_modules/vuelidate/src/index.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
 
 
 
 
-Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-Vue.use(vuelidate_src__WEBPACK_IMPORTED_MODULE_4__["default"]);
+Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
+Vue.use(vuelidate_src__WEBPACK_IMPORTED_MODULE_5__["default"]);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -62709,16 +62738,41 @@ Vue.component('usercart', __webpack_require__(/*! ./components/cart/usercart */ 
 var app = new Vue({
   el: '#app',
   render: function render(h) {
-    return h(_components_App__WEBPACK_IMPORTED_MODULE_0__["default"]);
+    return h(_components_App__WEBPACK_IMPORTED_MODULE_1__["default"]);
   },
-  router: _routes__WEBPACK_IMPORTED_MODULE_2__["default"],
-  store: _store__WEBPACK_IMPORTED_MODULE_3__["default"],
+  router: _routes__WEBPACK_IMPORTED_MODULE_3__["default"],
+  store: _store__WEBPACK_IMPORTED_MODULE_4__["default"],
   mounted: function mounted() {
-    this.$store.commit('setLoading', true);
-    this.$store.dispatch('authUser');
-    this.$store.dispatch('getProduct');
-    this.$store.dispatch('getCurrency');
-    this.$store.commit('setLoading', false);
+    var _this = this;
+
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _this.$store.commit('setLoading', true);
+
+              _context.next = 3;
+              return _this.$store.dispatch('authUser');
+
+            case 3:
+              _context.next = 5;
+              return _this.$store.dispatch('getProduct');
+
+            case 5:
+              _context.next = 7;
+              return _this.$store.dispatch('getCurrency');
+
+            case 7:
+              _this.$store.commit('setLoading', false);
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
   }
 });
 

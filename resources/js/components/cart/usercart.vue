@@ -23,12 +23,10 @@
                 <div class="text-success">
                     <h6 class="my-0">Price including discount</h6>
                 </div>
-                <span class="text-success">{{ (amountWithDiscount * this.mainCurrencyRate).toFixed(2) }}{{ currencyLabel }}</span>
+                <span class="text-success">{{ (amountWithDiscount * mainCurrencyRate).toFixed(2) }}{{ currencyLabel }}</span>
             </li>
         </ul>
-        <form class="card p-2"
-              @submit.prevent="onSubmit"
-        >
+        <div class="card p-2">
             <div class="input-group">
                 <select name="promocodes" v-model="promo" class="custom-select d-block" id="promocodes">
                     <option value="">Choose...</option>
@@ -39,13 +37,13 @@
                     </option>
                 </select>
                 <div class="input-group-append">
-                    <button @click="getDiscount"  class="btn btn-secondary">Redeem</button>
+                    <button @click="getDiscount" :disabled="flagPromo"  class="btn btn-secondary">Redeem</button>
                 </div>
             </div>
             <div class="container-fluid">
                 <button @click="clearCart" class="mt-2 btn btn-secondary btn-lg btn-block">Clear Cart</button>
             </div>
-        </form>
+        </div>
 
     </div>
 </template>
@@ -55,8 +53,8 @@
         name: "usercart",
         data: function () {
             return {
+                flagPromo: false,
                 amount: 0,
-                amountWithDiscount: 0,
                 promo: 0,
                 currency: '',
                 currencyLabel: ''
@@ -76,25 +74,26 @@
             userCart() {
                 return this.$store.getters.productsInCart;
             },
-            totalAmount() {
+            totalAmount () {
                 return this.$store.getters.totalAmountInCart;
             },
-            totalValue() {
+            totalValue () {
                 return this.$store.getters.totalValueInCart;
             },
             mainCurrencyRate () {
                 return this.$store.getters.currencyMainRate;
+            },
+            amountWithDiscount () {
+                return this.$store.getters.amountWithDiscount
             }
         },
         methods: {
-            onSubmit: function () {
-
-            },
             getDiscount: function () {
-                this.amountWithDiscount = this.totalAmount * (100 - this.promo) / 100;
-                this.amountWithDiscount.toFixed(2);
+                this.$store.dispatch('getDiscount', this.amountWithDiscount * (100 - this.promo) / 100);
+                this.flagPromo = true;
             },
             clearCart: function () {
+                this.amountWithDiscount = 0;
                 this.$store.dispatch('clearCart');
             }
         }

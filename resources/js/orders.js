@@ -4,9 +4,6 @@ export default {
     },
     mutations: {
         getOrdersToCatalog (state, payload) {
-            for (let key in payload) {
-                payload[key].amount = payload[key].amount / 100;
-            }
             state.dataOrders = payload;
         },
         clearOrders (state) {
